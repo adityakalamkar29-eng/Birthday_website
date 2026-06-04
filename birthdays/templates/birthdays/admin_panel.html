@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Portal ✨</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{min-height:100vh;font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#fff0f8,#f5e6ff,#fff5e6,#ffe6f5);
+  background-size:400% 400%;animation:gradAnim 10s ease infinite;padding:0 0 60px;}
+@keyframes gradAnim{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+
+/* ── Topbar ── */
+.topbar{
+  background:rgba(255,255,255,.85);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(233,30,140,.1);
+  padding:14px 28px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:12px;
+}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-logo{font-family:'Dancing Script',cursive;font-size:1.5rem;color:#e91e8c;}
+.admin-badge{background:linear-gradient(135deg,#9c27b0,#e91e8c);color:#fff;
+  font-size:.65rem;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.8px;text-transform:uppercase;}
+.topbar-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+/* ── Buttons ── */
+.btn{padding:9px 18px;border-radius:11px;font-size:.82rem;
+  font-family:'Poppins',sans-serif;cursor:pointer;border:none;font-weight:500;
+  text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+.btn-primary{background:linear-gradient(135deg,#e91e8c,#9c27b0);color:#fff;
+  box-shadow:0 4px 14px rgba(233,30,140,.28);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 7px 20px rgba(233,30,140,.38);}
+.btn-outline{background:transparent;border:1.5px solid #e91e8c;color:#e91e8c;}
+.btn-outline:hover{background:rgba(233,30,140,.06);}
+.btn-ghost{background:transparent;border:1.5px solid rgba(156,39,176,.3);color:#9c27b0;}
+.btn-ghost:hover{background:rgba(156,39,176,.06);}
+.btn-danger{background:rgba(244,67,54,.08);border:1.5px solid rgba(244,67,54,.25);color:#d32f2f;}
+.btn-danger:hover{background:rgba(244,67,54,.16);}
+.btn-sm{padding:6px 13px;font-size:.76rem;border-radius:9px;}
+
+/* ── Main layout ── */
+.main{max-width:1000px;margin:32px auto;padding:0 20px;}
+
+/* ── Stats row ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:30px;}
+.stat-card{background:rgba(255,255,255,.8);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.9);border-radius:18px;padding:20px 22px;
+  box-shadow:0 6px 20px rgba(233,30,140,.07);text-align:center;}
+.stat-card .num{font-family:'Dancing Script',cursive;font-size:2.4rem;color:#e91e8c;line-height:1;}
+.stat-card .label{font-size:.75rem;color:#9e7aa8;margin-top:4px;font-weight:500;}
+
+/* ── Section card ── */
+.section-card{background:rgba(255,255,255,.8);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.9);border-radius:22px;padding:28px;margin-bottom:24px;
+  box-shadow:0 8px 30px rgba(233,30,140,.07);}
+.section-title{font-family:'Dancing Script',cursive;font-size:1.7rem;color:#e91e8c;
+  margin-bottom:22px;display:flex;align-items:center;gap:10px;}
+
+/* ── Birthday page cards ── */
+.pages-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.page-card{background:rgba(255,255,255,.7);border:1px solid rgba(233,30,140,.12);
+  border-radius:18px;padding:20px;transition:all .25s;position:relative;overflow:hidden;}
+.page-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#e91e8c,#9c27b0);}
+.page-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(233,30,140,.13);}
+.page-card.birthday-today::before{background:linear-gradient(90deg,#ff9800,#e91e8c,#9c27b0);}
+
+.page-name{font-family:'Dancing Script',cursive;font-size:1.4rem;color:#4a2a5a;margin-bottom:2px;}
+.page-dob{font-size:.78rem;color:#b08ac0;margin-bottom:12px;display:flex;align-items:center;gap:5px;}
+.page-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.meta-chip{font-size:.72rem;padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;}
+.chip-photo{background:rgba(233,30,140,.1);color:#c01070;}
+.chip-music{background:rgba(156,39,176,.1);color:#7b1fa2;}
+.chip-today{background:linear-gradient(135deg,#ff9800,#e91e8c);color:#fff;font-weight:600;}
+
+.page-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.empty-state{text-align:center;padding:48px 20px;}
+.empty-state .emoji{font-size:3rem;margin-bottom:12px;}
+.empty-state p{color:#b08ac0;font-size:.95rem;}
+
+/* ── Messages ── */
+.messages{margin-bottom:20px;}
+.msg{padding:12px 18px;border-radius:12px;font-size:.88rem;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.msg.success{background:rgba(76,175,80,.1);color:#2e7d32;border:1px solid rgba(76,175,80,.2);}
+.msg.error{background:rgba(244,67,54,.1);color:#c62828;border:1px solid rgba(244,67,54,.2);}
+
+/* ── Modal overlay ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:20px;padding:28px;max-width:360px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;animation:popIn .25s ease;}
+@keyframes popIn{from{transform:scale(.9);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal h3{font-family:'Dancing Script',cursive;font-size:1.5rem;color:#e91e8c;margin-bottom:8px;}
+.modal p{color:#7a5a8a;font-size:.9rem;margin-bottom:22px;}
+.modal-actions{display:flex;gap:10px;justify-content:center;}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-logo">🎂 Birthday Memories</span>
+    <span class="admin-badge">Admin Portal</span>
+  </div>
+  <div class="topbar-right">
+    <a href="{% url 'create_page' %}" class="btn btn-primary">🎀 Create New Page</a>
+    <a href="{% url 'home' %}" class="btn btn-ghost">🏠 View Site</a>
+    <form method="post" style="display:inline;">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="logout">
+      <button type="submit" class="btn btn-outline">🔓 Logout</button>
+    </form>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Messages -->
+  {% if messages %}
+  <div class="messages">
+    {% for msg in messages %}
+    <div class="msg {% if msg.tags %}{{ msg.tags }}{% endif %}">{{ msg }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="num">{{ total_pages }}</div>
+      <div class="label">Birthday Pages</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">{{ total_photos }}</div>
+      <div class="label">Total Photos</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">{{ today|date:"d" }}</div>
+      <div class="label">Today — {{ today|date:"M Y" }}</div>
+    </div>
+  </div>
+
+  <!-- All Birthday Pages -->
+  <div class="section-card">
+    <div class="section-title">
+      🎉 All Birthday Pages
+      <span style="font-family:'Poppins',sans-serif;font-size:.8rem;color:#b08ac0;margin-left:auto;font-weight:400;">
+        {{ total_pages }} page{{ total_pages|pluralize }}
+      </span>
+    </div>
+
+    {% if pages_data %}
+    <div class="pages-grid">
+      {% for item in pages_data %}
+      <div class="page-card {% if item.is_birthday_today %}birthday-today{% endif %}">
+
+        {% if item.is_birthday_today %}
+        <div style="font-size:.75rem;color:#e91e8c;font-weight:600;margin-bottom:6px;letter-spacing:.5px;">🎂 BIRTHDAY TODAY!</div>
+        {% endif %}
+
+        <div class="page-name">{{ item.person.name }}</div>
+        {% if item.person.nickname %}
+        <div style="font-size:.8rem;color:#c090c8;margin-bottom:4px;">aka "{{ item.person.nickname }}"</div>
+        {% endif %}
+        <div class="page-dob">
+          <span>🗓</span> {{ item.person.dob|date:"d M Y" }}
+        </div>
+
+        <div class="page-meta">
+          <span class="meta-chip chip-photo">📸 {{ item.photo_count }} photo{{ item.photo_count|pluralize }}</span>
+          {% if item.person.has_music %}
+          <span class="meta-chip chip-music">🎵 music</span>
+          {% endif %}
+        </div>
+
+        <div class="page-actions">
+          <a href="/{{ item.dob_str }}/" class="btn btn-outline btn-sm" target="_blank">👁 View</a>
+          <a href="/{{ item.dob_str }}/manage/" class="btn btn-ghost btn-sm">⚙️ Manage</a>
+          <button class="btn btn-danger btn-sm"
+            onclick="confirmDelete('{{ item.person.name }}','{{ item.dob_str }}')">🗑 Delete</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+      <div class="emoji">🎈</div>
+      <p>No birthday pages yet.</p>
+      <a href="{% url 'create_page' %}" class="btn btn-primary" style="margin-top:16px;display:inline-flex;">
+        🎀 Create the first one!
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>Delete Page?</h3>
+    <p id="deleteMsg">This will permanently delete all photos and data for this birthday page.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <form method="post" id="deleteForm">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="delete_page">
+        <input type="hidden" name="dob" id="deleteDob">
+        <button type="submit" class="btn btn-danger">🗑 Yes, Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function confirmDelete(name, dob) {
+  document.getElementById('deleteMsg').textContent =
+    `This will permanently delete ${name}'s page, all photos, and music. This cannot be undone.`;
+  document.getElementById('deleteDob').value = dob;
+  document.getElementById('deleteModal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('deleteModal').classList.remove('open');
+}
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>

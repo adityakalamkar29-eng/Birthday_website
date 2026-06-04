@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Portal 🔐</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  min-height:100vh;font-family:'Poppins',sans-serif;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#1a0a2e,#2d1052,#1a0a2e);
+  background-size:400% 400%;animation:gradAnim 8s ease infinite;
+  padding:20px;
+}
+@keyframes gradAnim{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%};}
+#canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.wrap{position:relative;z-index:1;text-align:center;animation:fadeIn .6s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.lock-icon{font-size:3.5rem;margin-bottom:12px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+h1{font-family:'Dancing Script',cursive;font-size:clamp(2rem,6vw,3rem);color:#e0b3ff;margin-bottom:6px;}
+.sub{color:#a070c0;font-size:.9rem;margin-bottom:36px;}
+.card{
+  background:rgba(255,255,255,.07);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.15);border-radius:24px;
+  padding:36px;width:100%;max-width:400px;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+label{display:block;font-size:.8rem;color:#c090e0;margin-bottom:8px;letter-spacing:.5px;}
+input[type=password]{
+  width:100%;padding:14px 18px;
+  border:2px solid rgba(180,100,255,.3);border-radius:12px;
+  font-size:1rem;font-family:'Poppins',sans-serif;
+  color:#f0e0ff;background:rgba(255,255,255,.08);outline:none;
+  transition:border-color .3s,box-shadow .3s;
+}
+input::placeholder{color:rgba(200,150,255,.4);}
+input:focus{border-color:#9c27b0;box-shadow:0 0 0 4px rgba(156,39,176,.2);}
+.btn{
+  width:100%;padding:14px;margin-top:18px;
+  background:linear-gradient(135deg,#9c27b0,#e91e8c);
+  color:#fff;border:none;border-radius:12px;
+  font-size:1rem;font-family:'Poppins',sans-serif;font-weight:600;
+  cursor:pointer;letter-spacing:.5px;
+  box-shadow:0 8px 24px rgba(156,39,176,.4);
+  transition:all .3s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(156,39,176,.5);}
+.error{
+  background:rgba(244,67,54,.15);border:1px solid rgba(244,67,54,.3);
+  color:#ff8a80;border-radius:10px;padding:10px 14px;
+  font-size:.85rem;margin-bottom:16px;
+}
+.hint{margin-top:20px;font-size:.75rem;color:rgba(180,130,220,.4);}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="wrap">
+  <div class="lock-icon">🔐</div>
+  <h1>Admin Portal</h1>
+  <p class="sub">Restricted — authorised access only</p>
+
+  <div class="card">
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <label>Master Password</label>
+      <input type="password" name="password" placeholder="Enter master password" autofocus required>
+      <button type="submit" class="btn">🚀 Enter Portal</button>
+    </form>
+    <p class="hint">This page is not linked anywhere on the site.</p>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
+let W,H,P=[];
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;}
+resize();window.addEventListener('resize',resize);
+class Star{
+  constructor(){this.reset();}
+  reset(){this.x=Math.random()*W;this.y=Math.random()*H;
+    this.r=Math.random()*2+0.5;this.a=Math.random();this.da=(Math.random()-.5)*.02;}
+  update(){this.a+=this.da;if(this.a<0||this.a>1)this.da*=-1;}
+  draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(220,180,255,${this.a})`;ctx.fill();}
+}
+for(let i=0;i<80;i++)P.push(new Star());
+function anim(){ctx.clearRect(0,0,W,H);P.forEach(p=>{p.update();p.draw();});requestAnimationFrame(anim);}
+anim();
+</script>
+</body>
+</html>

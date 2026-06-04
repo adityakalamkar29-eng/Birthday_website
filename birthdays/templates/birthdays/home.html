@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎂 Birthday Memories</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  min-height:100vh;font-family:'Poppins',sans-serif;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#fff0f8,#f5e6ff,#fff5e6,#ffe6f5);
+  background-size:400% 400%;animation:gradAnim 10s ease infinite;
+  padding:20px;overflow-x:hidden;
+}
+@keyframes gradAnim{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+
+#canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+
+.hero{
+  position:relative;z-index:1;text-align:center;
+  animation:fadeInUp .8s ease;
+}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+
+.logo{font-size:4rem;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+
+h1{
+  font-family:'Dancing Script',cursive;font-size:clamp(2.5rem,8vw,4.5rem);
+  background:linear-gradient(135deg,#e91e8c,#9c27b0,#e91e8c);
+  background-size:200%;animation:gradText 3s ease infinite;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:8px;
+}
+@keyframes gradText{0%{background-position:0%;}50%{background-position:100%;}100%{background-position:0%;}}
+
+.subtitle{color:#9e7aa8;font-size:1rem;margin-bottom:48px;font-weight:300;}
+
+.card{
+  background:rgba(255,255,255,.75);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.9);border-radius:28px;
+  padding:40px;width:100%;max-width:440px;
+  box-shadow:0 20px 60px rgba(233,30,140,.12),0 4px 20px rgba(233,30,140,.08);
+  margin-bottom:20px;
+}
+.card h2{
+  font-family:'Dancing Script',cursive;font-size:1.8rem;
+  color:#e91e8c;text-align:center;margin-bottom:24px;
+}
+
+label{display:block;font-size:.8rem;font-weight:500;color:#9e7aa8;margin-bottom:6px;letter-spacing:.5px;}
+input[type=date],input[type=text]{
+  width:100%;padding:14px 18px;
+  border:2px solid rgba(233,30,140,.2);border-radius:14px;
+  font-size:1rem;font-family:'Poppins',sans-serif;color:#4a2a5a;
+  background:rgba(255,255,255,.8);outline:none;
+  transition:border-color .3s,box-shadow .3s;
+}
+input:focus{border-color:#e91e8c;box-shadow:0 0 0 4px rgba(233,30,140,.12);}
+
+.btn{
+  width:100%;padding:15px;margin-top:16px;
+  background:linear-gradient(135deg,#e91e8c,#9c27b0);
+  color:#fff;border:none;border-radius:14px;
+  font-size:1rem;font-family:'Poppins',sans-serif;font-weight:600;
+  cursor:pointer;letter-spacing:.5px;
+  box-shadow:0 8px 24px rgba(233,30,140,.3);
+  transition:all .3s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(233,30,140,.4);}
+.btn:active{transform:translateY(0);}
+
+.divider{
+  position:relative;text-align:center;margin:20px 0;
+}
+.divider::before{
+  content:'';position:absolute;top:50%;left:0;right:0;
+  height:1px;background:linear-gradient(90deg,transparent,rgba(233,30,140,.2),transparent);
+}
+.divider span{background:rgba(255,255,255,.9);padding:0 12px;color:#c090c8;font-size:.85rem;position:relative;}
+
+.btn-outline{
+  width:100%;padding:14px;background:transparent;
+  border:2px solid #e91e8c;color:#e91e8c;border-radius:14px;
+  font-size:.95rem;font-family:'Poppins',sans-serif;font-weight:500;
+  cursor:pointer;transition:all .3s;letter-spacing:.3px;text-decoration:none;
+  display:block;text-align:center;
+}
+.btn-outline:hover{background:rgba(233,30,140,.08);}
+
+.messages{margin-bottom:16px;}
+.msg{padding:12px 16px;border-radius:12px;font-size:.9rem;margin-bottom:8px;}
+.msg.error{background:rgba(244,67,54,.1);color:#c62828;border:1px solid rgba(244,67,54,.2);}
+.msg.success{background:rgba(76,175,80,.1);color:#2e7d32;border:1px solid rgba(76,175,80,.2);}
+
+.tagline{
+  font-family:'Dancing Script',cursive;font-size:1.1rem;color:#c090c8;
+  text-align:center;margin-top:24px;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="hero">
+  <div class="logo">🎂</div>
+  <h1>Birthday Memories</h1>
+  <p class="subtitle">A dreamy space to celebrate someone special ✨</p>
+
+  <div class="card">
+    <h2>Find a Birthday Page 🔍</h2>
+    {% if messages %}
+    <div class="messages">
+      {% for msg in messages %}
+      <div class="msg {% if msg.tags %}{{ msg.tags }}{% endif %}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <form method="post" action="">
+      {% csrf_token %}
+      <label>Enter Date of Birth (YYYY-MM-DD)</label>
+      <input type="date" name="dob" required>
+      <button type="submit" class="btn">✨ Open Birthday Page</button>
+    </form>
+  </div>
+  <div class="tagline">Made with Pure Emotions 💕</div>
+</div>
+
+<script>
+const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
+let W,H,P=[];
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;}
+resize();window.addEventListener('resize',resize);
+class Dot{
+  constructor(){this.reset();}
+  reset(){this.x=Math.random()*W;this.y=H+10;this.vy=-(0.3+Math.random()*1);
+    this.vx=(Math.random()-.5)*.4;this.a=Math.random()*.5+.1;
+    this.s=Math.random()*20+8;this.c=Math.floor(Math.random()*3);
+    this.sh=['❤','✦','✿'][this.c];this.life=0;this.ml=H/Math.abs(this.vy);}
+  up(){this.x+=this.vx;this.y+=this.vy;this.life++;if(this.life>this.ml)this.reset();}
+  draw(){
+    ctx.save();ctx.globalAlpha=this.a*(1-this.life/this.ml);
+    ctx.font=this.s+'px serif';
+    ctx.fillStyle=['#e91e8c','#9c27b0','#f06292'][this.c];
+    ctx.fillText(this.sh,this.x,this.y);ctx.restore();
+  }
+}
+for(let i=0;i<25;i++){const p=new Dot();p.life=Math.random()*p.ml;P.push(p);}
+function anim(){ctx.clearRect(0,0,W,H);P.forEach(p=>{p.up();p.draw();});requestAnimationFrame(anim);}
+anim();
+</script>
+</body>
+</html>
