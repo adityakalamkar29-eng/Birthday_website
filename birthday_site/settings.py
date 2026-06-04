@@ -1,4 +1,5 @@
 from pathlib import Path
+import dj_database_url
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,10 +52,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'birthday_site.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(
+        os.environ.get('postgresql://neondb_owner:npg_h6QxGc3kSlbZ@ep-sweet-smoke-aqmt2uxw-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require')
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = []
@@ -73,18 +73,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Cloudinary — media / photo storage
 # ──────────────────────────────────────────────
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
-    'API_KEY':    os.environ.get('CLOUDINARY_API_KEY', ''),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'dga9m84ns'),
+    'API_KEY':    os.environ.get('CLOUDINARY_API_KEY', '845328756826469'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'lRGsq8SZ6OyvpCEyVDhRKiGR66g'),
 }
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# When Cloudinary creds are set → store media there; otherwise fall back to local
-if CLOUDINARY_STORAGE['CLOUD_NAME']:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'          # kept for backwards compat; Cloudinary rewrites URLs
-else:
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
 
 # ──────────────────────────────────────────────
 # Master admin password  (change this!)
